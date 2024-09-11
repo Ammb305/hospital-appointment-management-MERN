@@ -36,32 +36,32 @@ jobs:
       - name: Deploy Frontend to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ arn:aws:ecs:us-east-1:339713176242:service/hospital-appointment-management/hospital-frontend-service1 }}
-          service: ${{ hospital-frontend-service1 }}
-          cluster: ${{ hospital-appointment-management }}
+          task-definition: hospital-appointment-management-mern-frontend
+          service: hospital-frontend-service1
+          cluster: hospital-appointment-management-cluster
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ us-east-1 }}
+          AWS_REGION: us-east-1
 
       - name: Deploy Backend to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ arn:aws:ecs:us-east-1:339713176242:service/hospital-appointment-management/hospital-backend-service }}
-          service: ${{ hospital-backend-service }}
-          cluster: ${{ hospital-appointment-management }}
+          task-definition: hospital-appointment-management-mern-backend
+          service: hospital-backend-service1
+          cluster: hospital-appointment-management-cluster
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ us-east-1 }}
+          AWS_REGION: us-east-1
 
       - name: Deploy Dashboard to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ arn:aws:ecs:us-east-1:339713176242:service/hospital-appointment-management/hospital-dashboard-service }}
-          service: ${{ hospital-dashboard-service }}
-          cluster: ${{ hospital-appointment-management }}
+          task-definition: hospital-appointment-management-mern-dashboard
+          service: hospital-dashboard-service1
+          cluster: hospital-appointment-management-cluster
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ us-east-1 }}
+          AWS_REGION: us-east-1
