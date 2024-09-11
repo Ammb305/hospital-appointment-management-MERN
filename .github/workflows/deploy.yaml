@@ -1,9 +1,9 @@
-name: CI/CD Pipeline
+name: Build and Deploy to ECS
 
 on:
   push:
     branches:
-      - main  # Trigger workflow on push to main branch
+      - main
 
 jobs:
   build-and-deploy:
@@ -16,27 +16,52 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Cache Docker layers
-        uses: actions/cache@v3
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker images
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          tags: your-dockerhub-username/your-app:latest
+        run: |
+          docker build -t ammb/hospital-appointment-management-mern-frontend:latest ./frontend
+          docker push ammb/hospital-appointment-management-mern-frontend:latest
 
-      - name: Deploy to Elastic Beanstalk
-        uses: aws-actions/aws-eb-deploy@v2
+          docker build -t ammb/hospital-appointment-management-mern-backend:latest ./backend
+          docker push ammb/hospital-appointment-management-mern-backend:latest
+
+          docker build -t ammb/hospital-appointment-management-mern-dashboard:latest ./dashboard
+          docker push ammb/hospital-appointment-management-mern-dashboard:latest
+
+      - name: Deploy Frontend to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          application-name: hospital-appointment-management-mern
-          environment-name: Hospital-appointment-management--env
-          version-label: ${{ github.sha }}
+          task-definition: ${{ arn:aws:ecs:us-east-1:339713176242:service/hospital-appointment-management/hospital-frontend-service1 }}
+          service: ${{ hospital-frontend-service1 }}
+          cluster: ${{ hospital-appointment-management }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: us-east-1
+          AWS_REGION: ${{ us-east-1 }}
+
+      - name: Deploy Backend to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ arn:aws:ecs:us-east-1:339713176242:service/hospital-appointment-management/hospital-backend-service }}
+          service: ${{ hospital-backend-service }}
+          cluster: ${{ hospital-appointment-management }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ us-east-1 }}
+
+      - name: Deploy Dashboard to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ arn:aws:ecs:us-east-1:339713176242:service/hospital-appointment-management/hospital-dashboard-service }}
+          service: ${{ hospital-dashboard-service }}
+          cluster: ${{ hospital-appointment-management }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ us-east-1 }}
