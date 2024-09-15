@@ -20,7 +20,7 @@ const App = () => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          "http://44.201.80.125:4000/api/v1/user/patient/me",
+          "http://a44d0064769ec499ea6e0bcdbc1adb15-1814674556.us-east-1.elb.amazonaws.com/api/v1/user/patient/me",
           {
             withCredentials: true,
           }

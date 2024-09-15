@@ -11,7 +11,7 @@ const Doctors = () => {
     const fetchDoctors = async () => {
       try {
         const { data } = await axios.get(
-          "http://44.201.80.125:4000/api/v1/user/doctors",
+          "http://a44d0064769ec499ea6e0bcdbc1adb15-1814674556.us-east-1.elb.amazonaws.com/api/v1/user/doctors",
           { withCredentials: true }
         );
         setDoctors(data.doctors);

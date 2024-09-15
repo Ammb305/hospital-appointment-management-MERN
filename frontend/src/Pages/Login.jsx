@@ -18,7 +18,7 @@ const Login = () => {
     try {
       await axios
         .post(
-          "http://44.201.80.125:4000/api/v1/user/login",
+          "http://a44d0064769ec499ea6e0bcdbc1adb15-1814674556.us-east-1.elb.amazonaws.com/api/v1/user/login",
           { email, password, confirmPassword, role: "Patient" },
           {
             withCredentials: true,
